@@ -1,0 +1,26 @@
+plugins {
+	id 'java'
+	id 'scala'
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	scalaVersion = "2.11"
+	akkaVersion = "2.4.4"
+}
+
+dependencies {
+	implementation 'org.scala-lang:scala-library:2.11.12'
+	implementation "com.typesafe.akka:akka-actor_${scalaVersion}:${akkaVersion}"
+	implementation "com.typesafe.akka:akka-stream_${scalaVersion}:${akkaVersion}"
+	implementation "com.typesafe.akka:akka-http-experimental_${scalaVersion}:${akkaVersion}"
+	implementation "com.typesafe.akka:akka-http-spray-json-experimental_${scalaVersion}:${akkaVersion}"
+}
+
+test {
+	useJUnitPlatform()
+}
+
