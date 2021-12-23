@@ -1,0 +1,5 @@
+package poemGenerator
+
+class InputController {
+
+}
