@@ -20,8 +20,6 @@ object PoemGeneratorMain {
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
     println(s"Server online at http://localhost:8080/poem-generator/")
-    println(s"Resources at http://localhost:8080/poem-generator/poems/1-1-1.xml")
-    println(s"Resources at http://localhost:8080/poem-generator/glyphs/1-1-1.jpg")
 
   }
 }

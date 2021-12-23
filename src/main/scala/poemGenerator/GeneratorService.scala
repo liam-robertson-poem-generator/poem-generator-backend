@@ -1,5 +1,5 @@
 package poemGenerator
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Directives.{complete, get, path, pathSingleSlash}
 import akka.http.scaladsl.server.Route
@@ -11,7 +11,7 @@ class GeneratorService {
   val routes: Route =
     get {
       pathSingleSlash {
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Server is up</h1>"))
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, inputController.serverStatusMessage))
       } ~
       pathPrefix("poems") {
         getFromDirectory("src/main/resources/poems")
@@ -20,7 +20,7 @@ class GeneratorService {
         getFromDirectory("src/main/resources/glyphs")
       } ~
       path("listAll") {
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, ""))
+        complete(HttpEntity(ContentTypes.`application/json`, inputController.listAll().toString))
       }
     }
 
