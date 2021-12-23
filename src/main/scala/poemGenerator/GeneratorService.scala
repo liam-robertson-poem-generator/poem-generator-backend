@@ -20,7 +20,7 @@ class GeneratorService {
         getFromDirectory("src/main/resources/glyphs")
       } ~
       path("listAll") {
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, inputController.listAll()))
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, ""))
       }
     }
 
