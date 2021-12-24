@@ -1,7 +1,6 @@
 package poemGenerator
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.Directives.{complete, get, path, pathSingleSlash}
 import akka.http.scaladsl.server.Route
 
 class GeneratorService {
@@ -20,8 +19,11 @@ class GeneratorService {
         getFromDirectory("src/main/resources/glyphs")
       } ~
       path("listAll") {
-        complete(HttpEntity(ContentTypes.`application/json`, inputController.listAll().toString))
-      }
+        complete(HttpEntity(ContentTypes.`application/json`, inputController.getSorted2dArray().toString))
+      } ~
+        path("getIteratedList") {
+          complete(HttpEntity(ContentTypes.`application/json`, inputController.iterateSorted2dArray(20, Array(1,1,1), "forwards").toString))
+        }
     }
 
 }
