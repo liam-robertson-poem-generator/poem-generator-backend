@@ -1,6 +1,7 @@
 package poemGenerator
 
 import java.io.File
+import scala.:+
 
 class InputController {
 
@@ -10,22 +11,25 @@ class InputController {
       "</div>"
 
   def iterateSorted2dArray(numOfPoems: Int, startingPoem: Array[Int], poemDirection: String) = {
-    val final2dArray: Array[Array[Int]] = Array()
-    val poem2dArray: Array[Array[Int]] = this.getSorted2dArray()
-    var poemCoord: Int = 0
-    var currentPoem: Array[Int] = startingPoem
-    var currentPoemIndex: Int = poem2dArray.indexWhere(poem => poem == currentPoem)
+    var currentPoemCoord: Int = 2
+    var currentPoem: String = startingPoem.mkString(",")
+
+    var poem2dArray: Array[String] = this.getSorted2dArray().sortBy(poemMatrix => (poemMatrix(currentPoemCoord)))
+    var nextPoem: String = poem2dArray(poem2dArray.indexOf(currentPoem) + 1)
+    var final2dArray = Array() :+ currentPoem
+    currentPoem = nextPoem
 
     while (final2dArray.length < numOfPoems) {
-      poemCoord += 1
-      if (poemCoord == 3) {
-        poemCoord = 0
+      currentPoemCoord += 1
+      if (currentPoemCoord == 3) {
+        currentPoemCoord = 0
       }
-      poem2dArray.sortBy(poemMatrix => poemMatrix(poemCoord))
-      currentPoemIndex = poem2dArray.indexWhere(poem => poem == currentPoem)
-      final2dArray :+ poem2dArray(currentPoemIndex + 1)
+      poem2dArray = poem2dArray.sortBy(poemMatrix => poemMatrix(currentPoemCoord)))
+      nextPoem = poem2dArray(poem2dArray.map(poemName => poemName.toString).indexOf(currentPoem) + 1)
+      final2dArray = final2dArray :+ currentPoem
+      currentPoem = nextPoem
     }
-    final2dArray
+    final2dArray.map(poemName => poemName.split(","))
   }
 
   def getSorted2dArray(): Array[Array[Int]] = {

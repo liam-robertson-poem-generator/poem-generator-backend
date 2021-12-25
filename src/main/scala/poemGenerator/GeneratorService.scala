@@ -22,7 +22,7 @@ class GeneratorService {
         complete(HttpEntity(ContentTypes.`application/json`, inputController.getSorted2dArray().toString))
       } ~
         path("getIteratedList") {
-          complete(HttpEntity(ContentTypes.`application/json`, inputController.iterateSorted2dArray(20, Array(1,1,1), "forwards").toString))
+          complete(HttpEntity(ContentTypes.`application/json`, inputController.iterateSorted2dArray(20, Array(1,1,9), "forwards").toString))
         }
     }
 
