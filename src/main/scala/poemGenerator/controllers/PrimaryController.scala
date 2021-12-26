@@ -15,9 +15,8 @@ class PrimaryController {
    * The poems outputted by the algorithm are then appended to a word document
    * The word document is served to the client
    */
-  def primaryExecutor() = {
-    val poem2dArray: Array[Array[Int]] = inputController.getSorted2dArray()
-    val outputPoemList = inputController.iterateSorted2dArray(3, Array(1, 1, 1), "start", poem2dArray)
+  def primaryExecutor(numOfPoems: Int, startingPoem: Array[Int], poemOrder: String) = {
+    val outputPoemList = inputController.iterateSorted2dArray(numOfPoems, startingPoem, poemOrder)
     exportController.exportToWord(outputPoemList)
   }
 

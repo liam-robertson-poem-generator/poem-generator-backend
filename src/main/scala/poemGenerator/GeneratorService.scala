@@ -7,28 +7,38 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json.DefaultJsonProtocol
 
 class GeneratorService extends SprayJsonSupport with DefaultJsonProtocol {
-
   val inputController = new InputController();
   val primaryController = new PrimaryController();
 
+  case class generatorParameters(startingPoem: Array[Int], numOfPoems: Int, poemOrder: String)
+  implicit val parametersFormat = jsonFormat3(generatorParameters)
+
   val routes: Route =
-    get {
+    concat(
+      get {
       pathSingleSlash {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, inputController.serverStatusMessage))
       } ~
         pathPrefix("outputDocument") {
-          getFromDirectory("src/main/resources/output")
-      } ~
-      path("listAllPoems") {
-        complete(inputController.getSorted2dArray())
-      } ~
-        path("getIteratedList") {
-          complete(inputController.iterateSorted2dArray(20, Array(1,1,9), "start", inputController.getSorted2dArray()))
-      } ~
-      path("getDocument") {
-        primaryController.primaryExecutor()
-        complete(StatusCodes.OK)
+          getFromDirectory("build/resources/main/output")
+        } ~
+        path("listAllPoems") {
+          complete(inputController.getSorted2dArray())
+        }
+    },
+      post {
+        path("createDocument") {
+          entity(as[generatorParameters]) { parameters =>
+            primaryController.primaryExecutor(parameters.numOfPoems, parameters.startingPoem, parameters.poemOrder)
+            complete(StatusCodes.OK)
+          }
+        } ~
+          path("getIteratedList") {
+            entity(as[generatorParameters]) { parameters =>
+              complete(inputController.iterateSorted2dArray(parameters.numOfPoems, parameters.startingPoem, parameters.poemOrder))
+            }
+          }
       }
-    }
+    )
 
 }

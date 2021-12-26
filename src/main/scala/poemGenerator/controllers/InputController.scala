@@ -4,7 +4,7 @@ import java.io.File
 
 class InputController {
 
-  def iterateSorted2dArray(numOfPoems: Int, startingPoem: Array[Int], poemDirection: String, poem2dArray: Array[Array[Int]]) = {
+  def iterateSorted2dArray(numOfPoems: Int, startingPoem: Array[Int], poemDirection: String) = {
     var coordList: Array[Int] = Array(1, 2, 0)
     var currentPoem: Array[Int] = startingPoem
     var nextPoem: Array[Int] = startingPoem
@@ -21,6 +21,9 @@ class InputController {
       coordList = coordList.slice(1,3) ++ coordList.slice(0,1)
       poem2dArray = poem2dArray.sortBy(poemMatrix => (poemMatrix(coordList(0)), poemMatrix(coordList(1)), poemMatrix(coordList(2))))
       nextPoem = poem2dArray(poem2dArray.map(poemName => poemName.mkString(",")).indexOf(currentPoem.mkString(",")) + 1)
+    }
+    if (poemDirection == "end") {
+      final2dArray = final2dArray.reverse
     }
     final2dArray
   }
