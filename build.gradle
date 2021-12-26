@@ -5,6 +5,9 @@ plugins {
 
 repositories {
 	mavenCentral()
+	maven {
+		url "https://repo.e-iceblue.com/nexus/content/groups/public/"
+	}
 }
 
 ext {
@@ -18,6 +21,9 @@ dependencies {
 	implementation "com.typesafe.akka:akka-stream_${scalaVersion}:${akkaVersion}"
 	implementation "com.typesafe.akka:akka-http-experimental_${scalaVersion}:${akkaVersion}"
 	implementation "com.typesafe.akka:akka-http-spray-json-experimental_${scalaVersion}:${akkaVersion}"
+	implementation 'e-iceblue:spire.doc.free:3.9.0'
+	implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
+	implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
 }
 
 test {
