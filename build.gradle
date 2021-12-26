@@ -24,6 +24,7 @@ dependencies {
 	implementation 'e-iceblue:spire.doc.free:3.9.0'
 	implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
 	implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+	implementation "com.typesafe.akka:akka-http-spray-json_${scalaVersion}:10.0.7"
 }
 
 test {

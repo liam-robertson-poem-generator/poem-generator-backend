@@ -1,26 +1,33 @@
 package poemGenerator
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCodes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import poemGenerator.controllers.{InputController, PrimaryController}
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import spray.json.DefaultJsonProtocol
 
-class GeneratorService {
+class GeneratorService extends SprayJsonSupport with DefaultJsonProtocol {
 
   val inputController = new InputController();
-  val exportController = new ExportController();
+  val primaryController = new PrimaryController();
 
   val routes: Route =
     get {
       pathSingleSlash {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, inputController.serverStatusMessage))
       } ~
-      path("listAll") {
-        complete(HttpEntity(ContentTypes.`application/json`, inputController.getSorted2dArray().toString))
+        pathPrefix("outputDocument") {
+          getFromDirectory("src/main/resources/output")
+      } ~
+      path("listAllPoems") {
+        complete(inputController.getSorted2dArray())
       } ~
         path("getIteratedList") {
-          complete(HttpEntity(ContentTypes.`application/json`, inputController.iterateSorted2dArray(20, Array(1,1,9), "forwards").toString))
+          complete(inputController.iterateSorted2dArray(20, Array(1,1,9), "start", inputController.getSorted2dArray()))
       } ~
-      path("saveDoc") {
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, exportController.exportToWord()))
+      path("getDocument") {
+        primaryController.primaryExecutor()
+        complete(StatusCodes.OK)
       }
     }
 

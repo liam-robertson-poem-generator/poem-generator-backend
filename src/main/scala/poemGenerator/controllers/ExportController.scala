@@ -1,16 +1,16 @@
-package poemGenerator
+package poemGenerator.controllers
 
-import com.spire.doc.{Document, FileFormat, Section}
-import poemGenerator.controllerUtilites.ExportUtilities
+import com.spire.doc.{Document, FileFormat}
+import poemGenerator.utilities.ExportUtilities
+
+import java.io.File
 
 class ExportController {
 
-  case class Poem(code: String, title: String, text: String, glyph: String)
   val inputController = new InputController();
   val exportUtilities = new ExportUtilities();
 
-  def exportToWord() = {
-    val poemList = inputController.iterateSorted2dArray(4, Array(1,1,9), "forwards");
+  def exportToWord(poemList: Array[Array[Int]]) = {
     val document = new Document();
 
     exportUtilities.settingDocStyles(document);
@@ -29,7 +29,6 @@ class ExportController {
       exportUtilities.creatingDocContent(currentPoemCode, currentPoemTitle, glyphPath, currentPoemText, para1, para2, para3)
 
     })
-    document.saveToFile("Output.docx", FileFormat.Docx);
-    ""
+    document.saveToFile(new File("src/main/resources/output/output.docx").getAbsolutePath(), FileFormat.Docx);
   }
 }

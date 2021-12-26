@@ -1,4 +1,4 @@
-package poemGenerator.controllerUtilites
+package poemGenerator.utilities
 
 import com.spire.doc.Document
 import com.spire.doc.documents.{HorizontalAlignment, Paragraph, ParagraphStyle}

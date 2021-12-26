@@ -6,7 +6,7 @@ import akka.stream.ActorMaterializer
 import poemGenerator.GeneratorService
 
 object PoemGeneratorMain {
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]) = {
     implicit val system = ActorSystem()
     implicit val materializer = ActorMaterializer()
     implicit val executionContext = system.dispatcher

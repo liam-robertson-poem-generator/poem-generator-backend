@@ -1,15 +1,10 @@
-package poemGenerator
+package poemGenerator.controllers
 
 import java.io.File
 
 class InputController {
 
-  val serverStatusMessage: String =
-    "<div style='display:flex;padding-top:3em;justify-content:center;font-size:2em;'>" +
-      "<h2 style=font-family:'Arial'>Server is up</h2>" +
-      "</div>"
-
-  def iterateSorted2dArray(numOfPoems: Int, startingPoem: Array[Int], poemDirection: String) = {
+  def iterateSorted2dArray(numOfPoems: Int, startingPoem: Array[Int], poemDirection: String, poem2dArray: Array[Array[Int]]) = {
     var coordList: Array[Int] = Array(1, 2, 0)
     var currentPoem: Array[Int] = startingPoem
     var nextPoem: Array[Int] = startingPoem
@@ -38,5 +33,10 @@ class InputController {
     val poemCodeList = poemCodeListUnsorted.sortBy(poemMatrix => (poemMatrix(0), poemMatrix(1), poemMatrix(2)))
     poemCodeList
   }
+
+  val serverStatusMessage: String =
+    "<div style='display:flex;padding-top:3em;justify-content:center;font-size:2em;'>" +
+      "<h2 style=font-family:'Arial'>Server is up</h2>" +
+    "</div>"
 
 }
