@@ -51,17 +51,22 @@ class ExportController {
 
   def creatingDocContent(currentPoemCode: String, currentPoemTitle: String, glyphPath: URL, currentPoemText: String, para1: Paragraph, para2: Paragraph, para3: Paragraph) = {
     val glyph = para3.appendPicture(glyphPath.getPath);
-    para1.appendText(currentPoemCode);
+    if (currentPoemTitle == "") {
+      para1.appendText(currentPoemCode);
+    } else {
+      para1.appendText(currentPoemTitle);
+    }
     para2.appendText(currentPoemText);
     glyph.setWidth(300f);
     glyph.setHeight(200f);
 
     para1.getFormat().setHorizontalAlignment(HorizontalAlignment.Center);
+    para1.getFormat().setBeforeSpacing(20f)
     para1.getFormat().setAfterSpacing(15f);
     para2.getFormat().setHorizontalAlignment(HorizontalAlignment.Center);
     para2.getFormat().setLineSpacing(20f)
     para2.getFormat().setAfterAutoSpacing(false)
-    para2.getFormat().setAfterSpacing(0f);
+    para2.getFormat().setAfterSpacing(10f);
     para3.getFormat().setHorizontalAlignment(HorizontalAlignment.Center);
 
     para1.applyStyle("titleStyle");
@@ -73,7 +78,7 @@ class ExportController {
     style1.setName("titleStyle");
     style1.getCharacterFormat().setBold(true);
     style1.getCharacterFormat().setFontName("Garamond");
-    style1.getCharacterFormat().setFontSize(12f);
+    style1.getCharacterFormat().setFontSize(14f);
     document.getStyles().add(style1);
 
     val style2 = new ParagraphStyle(document);

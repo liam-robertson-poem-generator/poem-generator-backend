@@ -1,7 +1,17 @@
 plugins {
 	id 'java'
 	id 'scala'
+	id 'application'
+	id 'com.github.johnrengelman.shadow' version '7.1.1'
 }
+
+shadowJar {
+	append 'reference.conf'
+	append 'version.conf'
+	with jar
+}
+
+apply plugin: 'java'
 
 repositories {
 	mavenCentral()
@@ -19,12 +29,19 @@ dependencies {
 	implementation 'org.scala-lang:scala-library:2.11.12'
 	implementation "com.typesafe.akka:akka-actor_${scalaVersion}:${akkaVersion}"
 	implementation "com.typesafe.akka:akka-stream_${scalaVersion}:${akkaVersion}"
-	implementation "com.typesafe.akka:akka-http-experimental_${scalaVersion}:${akkaVersion}"
-	implementation "com.typesafe.akka:akka-http-spray-json-experimental_${scalaVersion}:${akkaVersion}"
+	implementation "com.typesafe.akka:akka-http_${scalaVersion}:${akkaVersion}"
 	implementation 'e-iceblue:spire.doc.free:3.9.0'
 	implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
 	implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
 	implementation "com.typesafe.akka:akka-http-spray-json_${scalaVersion}:10.0.7"
+}
+
+mainClassName = "PoemGeneratorMain"
+
+jar {
+	manifest {
+		attributes "Main-Class": "$mainClassName"
+	}
 }
 
 test {

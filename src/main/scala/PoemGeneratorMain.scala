@@ -18,8 +18,11 @@ object PoemGeneratorMain {
         generatorService.routes
       }
 
-    val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
-    println(s"Server online at http://localhost:8080/poem-generator/")
+    val host = "0.0.0.0"
+    val port = sys.env.getOrElse("PORT", "8080").toInt
+
+    val bindingFuture = Http().bindAndHandle(route, host, port)
+    println(s"Server online at http://${host}:${port}/poem-generator/")
 
   }
 }

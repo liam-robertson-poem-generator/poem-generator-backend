@@ -18,6 +18,7 @@ class InputController {
     while (final2dArray.length < numOfPoems) {
       currentPoem = nextPoem
       final2dArray = final2dArray :+ currentPoem
+      poem2dArray = poem2dArray.filter(poemName => poemName != currentPoem)
       coordList = coordList.slice(1,3) ++ coordList.slice(0,1)
       poem2dArray = poem2dArray.sortBy(poemMatrix => (poemMatrix(coordList(0)), poemMatrix(coordList(1)), poemMatrix(coordList(2))))
       nextPoem = poem2dArray(poem2dArray.map(poemName => poemName.mkString(",")).indexOf(currentPoem.mkString(",")) + 1)
