@@ -1,6 +1,8 @@
 package poemGenerator.controllers
 
-import java.util.zip.{ZipInputStream}
+import java.io.File
+import java.util.jar.JarFile
+import java.util.zip.ZipInputStream
 import scala.io.Source
 
 
@@ -32,30 +34,26 @@ class InputController {
   }
 
   def getSorted2dArray(): Array[Array[Int]] = {
-    val src = this.getClass.getProtectionDomain().getCodeSource();
-    val jarStream = src.getLocation().openStream();
-    val zip = new ZipInputStream(jarStream);
-    var poemNameListjar: Array[String] = Array()
-    Stream.continually(zip.getNextEntry).takeWhile(_ != null).foreach { zipEntry =>
-      if (!zipEntry.isDirectory) {
-        val entry = zip.getNextEntry
-        val entryName = zip.getNextEntry.getName
-        if (entryName.startsWith("poems/")) {
-          val currentPoemName = zip.getNextEntry.getName.split("/").last
-          poemNameListjar = poemNameListjar :+ currentPoemName
+    var poemNameList: Array[String] = Array()
+    val jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+    if(jarFile.isFile()) {
+      val jar = new JarFile(jarFile);
+      val entries = jar.entries();
+      while (entries.hasMoreElements()) {
+        val filePath = entries.nextElement().getName();
+        if (filePath.startsWith("poems/") && filePath != "poems/") {
+          val filename = filePath.split("/").last
+          poemNameList = poemNameList :+ filename
         }
       }
-    }
-    zip.close()
-    val poemStream = getClass().getResourceAsStream("/poems/")
-    val poemNameListLocal = Source.fromInputStream(poemStream).getLines.toArray
-
-    var poemNameList: Array[String] = Array()
-    if (poemNameListjar.length == 0) {
-      poemNameList = poemNameListLocal
+      jar.close();
     } else {
-      poemNameList = poemNameListjar
+      val poemStream =  getClass().getResourceAsStream("/poems")
+      if (poemStream != null) {
+        poemNameList = Source.fromInputStream(poemStream).getLines.toArray
+      }
     }
+
     val poemCodeListUnsorted: Array[Array[Int]] = poemNameList.map(poemName => {
       poemName.slice(0, poemName.length - 4).split("-").map(poemCodeStr => poemCodeStr.toInt)
     })
