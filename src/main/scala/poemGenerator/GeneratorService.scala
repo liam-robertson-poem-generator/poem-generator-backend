@@ -20,7 +20,7 @@ class GeneratorService extends SprayJsonSupport with DefaultJsonProtocol {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, inputController.serverStatusMessage))
       } ~
         pathPrefix("outputDocument") {
-          getFromDirectory("build/resources/main/output")
+          getFromResource("output/output.docx")
         } ~
         path("listAllPoems") {
           complete(inputController.getSorted2dArray())

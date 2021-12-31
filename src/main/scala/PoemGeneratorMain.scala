@@ -22,7 +22,7 @@ object PoemGeneratorMain {
     val port = sys.env.getOrElse("PORT", "8080").toInt
 
     val bindingFuture = Http().bindAndHandle(route, host, port)
-    println(s"Server online at http://${host}:${port}/poem-generator/")
+    println(s"Server online at http://localhost:${port}/poem-generator/")
 
   }
 }

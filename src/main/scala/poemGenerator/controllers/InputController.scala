@@ -1,6 +1,8 @@
 package poemGenerator.controllers
 
-import java.io.File
+import java.util.zip.{ZipInputStream}
+import scala.io.Source
+
 
 class InputController {
 
@@ -30,7 +32,30 @@ class InputController {
   }
 
   def getSorted2dArray(): Array[Array[Int]] = {
-    val poemNameList: Array[String] = new File("src/main/resources/poems").list
+    val src = this.getClass.getProtectionDomain().getCodeSource();
+    val jarStream = src.getLocation().openStream();
+    val zip = new ZipInputStream(jarStream);
+    var poemNameListjar: Array[String] = Array()
+    Stream.continually(zip.getNextEntry).takeWhile(_ != null).foreach { zipEntry =>
+      if (!zipEntry.isDirectory) {
+        val entry = zip.getNextEntry
+        val entryName = zip.getNextEntry.getName
+        if (entryName.startsWith("poems/")) {
+          val currentPoemName = zip.getNextEntry.getName.split("/").last
+          poemNameListjar = poemNameListjar :+ currentPoemName
+        }
+      }
+    }
+    zip.close()
+    val poemStream = getClass().getResourceAsStream("/poems/")
+    val poemNameListLocal = Source.fromInputStream(poemStream).getLines.toArray
+
+    var poemNameList: Array[String] = Array()
+    if (poemNameListjar.length == 0) {
+      poemNameList = poemNameListLocal
+    } else {
+      poemNameList = poemNameListjar
+    }
     val poemCodeListUnsorted: Array[Array[Int]] = poemNameList.map(poemName => {
       poemName.slice(0, poemName.length - 4).split("-").map(poemCodeStr => poemCodeStr.toInt)
     })
