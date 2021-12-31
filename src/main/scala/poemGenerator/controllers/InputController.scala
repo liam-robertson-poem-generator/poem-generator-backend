@@ -2,7 +2,6 @@ package poemGenerator.controllers
 
 import java.io.File
 import java.util.jar.JarFile
-import java.util.zip.ZipInputStream
 import scala.io.Source
 
 
@@ -34,6 +33,15 @@ class InputController {
   }
 
   def getSorted2dArray(): Array[Array[Int]] = {
+    val poemNameList = listDirectoryContent("poems")
+    val poemCodeListUnsorted: Array[Array[Int]] = poemNameList.map(poemName => {
+      poemName.slice(0, poemName.length - 4).split("-").map(poemCodeStr => poemCodeStr.toInt)
+    })
+    val poemCodeList = poemCodeListUnsorted.sortBy(poemMatrix => (poemMatrix(0), poemMatrix(1), poemMatrix(2)))
+    poemCodeList
+  }
+
+  def listDirectoryContent(path: String) = {
     var poemNameList: Array[String] = Array()
     val jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
     if(jarFile.isFile()) {
@@ -41,24 +49,19 @@ class InputController {
       val entries = jar.entries();
       while (entries.hasMoreElements()) {
         val filePath = entries.nextElement().getName();
-        if (filePath.startsWith("poems/") && filePath != "poems/") {
+        if (filePath.startsWith(path + "/") && filePath != path + "/") {
           val filename = filePath.split("/").last
           poemNameList = poemNameList :+ filename
         }
       }
       jar.close();
     } else {
-      val poemStream =  getClass().getResourceAsStream("/poems")
+      val poemStream =  getClass().getResourceAsStream("/" + path)
       if (poemStream != null) {
         poemNameList = Source.fromInputStream(poemStream).getLines.toArray
       }
     }
-
-    val poemCodeListUnsorted: Array[Array[Int]] = poemNameList.map(poemName => {
-      poemName.slice(0, poemName.length - 4).split("-").map(poemCodeStr => poemCodeStr.toInt)
-    })
-    val poemCodeList = poemCodeListUnsorted.sortBy(poemMatrix => (poemMatrix(0), poemMatrix(1), poemMatrix(2)))
-    poemCodeList
+    poemNameList
   }
 
   val serverStatusMessage: String =
