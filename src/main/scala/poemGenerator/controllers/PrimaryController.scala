@@ -1,8 +1,5 @@
 package poemGenerator.controllers
 
-import akka.stream.scaladsl.Source
-import akka.http.scaladsl.model.HttpEntity.{Chunked, ChunkStreamPart}
-import akka.http.scaladsl.model.{HttpResponse, ContentTypes}
 class PrimaryController {
 
   val inputController = new InputController();
@@ -17,7 +14,7 @@ class PrimaryController {
    */
   def primaryExecutor(numOfPoems: Int, startingPoem: Array[Int], poemOrder: String) = {
     val outputPoemList = inputController.iterateSorted2dArray(numOfPoems, startingPoem, poemOrder)
-    exportController.exportToWord(outputPoemList)
-  }
+    val docByteArray = exportController.exportToWord(outputPoemList)
+    docByteArray  }
 
 }

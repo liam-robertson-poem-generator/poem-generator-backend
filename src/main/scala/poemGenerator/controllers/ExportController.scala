@@ -2,10 +2,8 @@ package poemGenerator.controllers
 
 import com.spire.doc.documents.{HorizontalAlignment, Paragraph, ParagraphStyle}
 import com.spire.doc.{Document, FileFormat}
-import jdk.xml.internal.SecuritySupport.getClassLoader
 
-import java.io.File
-import java.net.URL
+import java.io.{ByteArrayOutputStream, InputStream}
 import javax.xml.XMLConstants
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -14,43 +12,40 @@ class ExportController {
   val inputController = new InputController();
 
   def exportToWord(poemList: Array[Array[Int]]) = {
-    val outputDoc = new File("build/resources/main/output/output.docx");
-    if(outputDoc.exists() && !outputDoc.isDirectory()) {
-      outputDoc.delete()
-    }
     val document = new Document();
     this.settingDocStyles(document);
 
     poemList.map(poem => {
       val currentPoemCode = poem.mkString("-")
-      val poemPath = this.getClass.getResource("/poems/" + currentPoemCode + ".xml")
-      val glyphPath = this.getClass.getResource("/glyphs/" + currentPoemCode + ".jpg")
-
+      val imageStream: InputStream =  getClass().getResourceAsStream("/glyphs/" + currentPoemCode + ".jpg")
       val section = document.addSection();
       val para1 = section.addParagraph();
       val para2 = section.addParagraph();
       val para3 = section.addParagraph();
 
-      val (currentPoemTitle, currentPoemText) = this.parsingXml(poemPath);
-      this.creatingDocContent(currentPoemCode, currentPoemTitle, glyphPath, currentPoemText, para1, para2, para3)
-
+      val (currentPoemTitle, currentPoemText) = this.parsingXml(currentPoemCode);
+      this.creatingDocContent(currentPoemCode, currentPoemTitle, imageStream, currentPoemText, document, para1, para2, para3)
     })
-    document.saveToFile(new File("build/resources/main/output/output.docx").getAbsolutePath(), FileFormat.Docx);
+    val docByteOut = new ByteArrayOutputStream()
+    document.saveToStream(docByteOut, FileFormat.Docx);
+    val docByteArray: Array[Byte] = docByteOut.toByteArray
+    docByteArray
   }
 
-  def parsingXml(poemPath: URL): (String, String)  = {
+  def parsingXml(currentPoemCode: String): (String, String)  = {
+    val poemStream: InputStream =  getClass().getResourceAsStream("/poems/" + currentPoemCode + ".xml")
     val dbf = DocumentBuilderFactory.newInstance
     dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
     val db = dbf.newDocumentBuilder();
-    val doc = db.parse(new File(poemPath.getFile));
+    val doc = db.parse(poemStream);
     doc.getDocumentElement().normalize();
     val currentPoemText: String = doc.getElementsByTagName("text").item(0).getTextContent
     val currentPoemTitle: String = doc.getElementsByTagName("title").item(0).getTextContent
     (currentPoemTitle, currentPoemText)
   }
 
-  def creatingDocContent(currentPoemCode: String, currentPoemTitle: String, glyphPath: URL, currentPoemText: String, para1: Paragraph, para2: Paragraph, para3: Paragraph) = {
-    val glyph = para3.appendPicture(glyphPath.getPath);
+  def creatingDocContent(currentPoemCode: String, currentPoemTitle: String, imageStream: InputStream, currentPoemText: String, document: Document, para1: Paragraph, para2: Paragraph, para3: Paragraph) = {
+    val glyph = para3.appendPicture(imageStream);
     if (currentPoemTitle == "") {
       para1.appendText(currentPoemCode);
     } else {
