@@ -1,7 +1,8 @@
 package poemGenerator
 import akka.actor.ActorSystem
+import akka.http.scaladsl.common.{EntityStreamingSupport, JsonEntityStreamingSupport}
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, MediaTypes}
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, MediaTypes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
@@ -13,8 +14,15 @@ class GeneratorService extends SprayJsonSupport with DefaultJsonProtocol {
   val inputController = new InputController();
   val primaryController = new PrimaryController();
 
+  implicit val jsonStreamingSupport: JsonEntityStreamingSupport = EntityStreamingSupport.json()
+
   case class generatorParameters(startingPoem: Array[Int], numOfPoems: Int, poemOrder: String)
+  case class wordDocStream(name: String, docStream: String)
+  case class Tweet(uid: Int, txt: String)
+
   implicit val parametersFormat = jsonFormat3(generatorParameters)
+  implicit val docStreamFormat = jsonFormat2(wordDocStream.apply)
+
   implicit val system = ActorSystem()
   implicit val materializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
@@ -32,10 +40,9 @@ class GeneratorService extends SprayJsonSupport with DefaultJsonProtocol {
         } ~
         path("createDocument") {
           parameters("numOfPoems".as[Int], "startingPoem".as[Array[Int]], "poemOrder") { (numOfPoems: Int, startingPoem: Array[Int], poemOrder: String) =>
-            val body: ByteString = ByteString(primaryController.primaryExecutor(numOfPoems, startingPoem, poemOrder))
-            val entity = HttpEntity.Strict(MediaTypes.`application/octet-stream`, body)
-            val httpResponse = HttpResponse(entity = entity)
-            complete(httpResponse)
+            val docByteArray: ByteString = primaryController.primaryExecutor(numOfPoems, startingPoem, poemOrder)
+            val entity = HttpEntity.Strict(MediaTypes.`application/octet-stream`, docByteArray)
+            complete(entity)
           }
         } ~
         path("getIteratedList") {

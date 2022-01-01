@@ -1,5 +1,7 @@
 package poemGenerator.controllers
 
+import akka.util.ByteString
+
 class PrimaryController {
 
   val inputController = new InputController();
@@ -14,7 +16,8 @@ class PrimaryController {
    */
   def primaryExecutor(numOfPoems: Int, startingPoem: Array[Int], poemOrder: String) = {
     val outputPoemList = inputController.iterateSorted2dArray(numOfPoems, startingPoem, poemOrder)
-    val docByteArray = exportController.exportToWord(outputPoemList)
-    docByteArray  }
+    val docByteArray: ByteString = exportController.exportToWord(outputPoemList)
+    docByteArray
+  }
 
 }

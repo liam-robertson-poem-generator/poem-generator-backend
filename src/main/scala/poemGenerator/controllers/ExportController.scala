@@ -1,5 +1,6 @@
 package poemGenerator.controllers
 
+import akka.util.ByteString
 import com.spire.doc.documents.{HorizontalAlignment, Paragraph, ParagraphStyle}
 import com.spire.doc.{Document, FileFormat}
 
@@ -28,7 +29,7 @@ class ExportController {
     })
     val docByteOut = new ByteArrayOutputStream()
     document.saveToStream(docByteOut, FileFormat.Docx);
-    val docByteArray: Array[Byte] = docByteOut.toByteArray
+    val docByteArray = ByteString(docByteOut.toByteArray)
     docByteArray
   }
 
