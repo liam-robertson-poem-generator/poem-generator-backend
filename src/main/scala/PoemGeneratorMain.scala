@@ -2,13 +2,11 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import akka.stream.ActorMaterializer
 import poemGenerator.GeneratorService
 
 object PoemGeneratorMain {
   def main(args: Array[String]) = {
     implicit val system = ActorSystem()
-    implicit val materializer = ActorMaterializer()
     implicit val executionContext = system.dispatcher
 
     val generatorService = new GeneratorService();

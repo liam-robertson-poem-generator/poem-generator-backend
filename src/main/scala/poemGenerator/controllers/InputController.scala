@@ -54,6 +54,7 @@ class InputController {
           poemNameList = poemNameList :+ filename
         }
       }
+      poemNameList = poemNameList.distinct
       jar.close();
     } else {
       val poemStream =  getClass().getResourceAsStream("/" + path)

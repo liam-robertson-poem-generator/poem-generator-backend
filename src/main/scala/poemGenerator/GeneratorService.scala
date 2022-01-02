@@ -14,27 +14,15 @@ class GeneratorService extends SprayJsonSupport with DefaultJsonProtocol {
   val inputController = new InputController();
   val primaryController = new PrimaryController();
 
-  implicit val jsonStreamingSupport: JsonEntityStreamingSupport = EntityStreamingSupport.json()
-
   case class generatorParameters(startingPoem: Array[Int], numOfPoems: Int, poemOrder: String)
-  case class wordDocStream(name: String, docStream: String)
-  case class Tweet(uid: Int, txt: String)
-
   implicit val parametersFormat = jsonFormat3(generatorParameters)
-  implicit val docStreamFormat = jsonFormat2(wordDocStream.apply)
 
-  implicit val system = ActorSystem()
-  implicit val materializer = ActorMaterializer()
-  implicit val executionContext = system.dispatcher
   val routes: Route =
     concat(
       get {
         pathSingleSlash {
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, inputController.serverStatusMessage))
-        } ~
-        pathPrefix("outputDocument") {
-          getFromResource("output/output.docx")
-        } ~
+        }
         path("listAllPoems") {
           complete(inputController.getSorted2dArray())
         } ~
