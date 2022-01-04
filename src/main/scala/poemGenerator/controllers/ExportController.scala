@@ -7,6 +7,7 @@ import com.spire.doc.{Document, FileFormat}
 import java.io.{ByteArrayOutputStream, InputStream}
 import javax.xml.XMLConstants
 import javax.xml.parsers.DocumentBuilderFactory
+import scala.util.{Failure, Success, Try}
 
 class ExportController {
 
@@ -38,7 +39,13 @@ class ExportController {
     val dbf = DocumentBuilderFactory.newInstance
     dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
     val db = dbf.newDocumentBuilder();
-    val doc = db.parse(poemStream);
+
+    val doc = Try(db.parse(poemStream)) match {
+      case Success(value) => value
+      case Failure(exception) =>
+        println(s"\nFailed to parse xml for poem code ${currentPoemCode}\n")
+        throw exception
+    }
     doc.getDocumentElement().normalize();
     val currentPoemText: String = doc.getElementsByTagName("text").item(0).getTextContent
     val currentPoemTitle: String = doc.getElementsByTagName("title").item(0).getTextContent
@@ -48,7 +55,7 @@ class ExportController {
   def creatingDocContent(currentPoemCode: String, currentPoemTitle: String, imageStream: InputStream, currentPoemText: String, document: Document, para1: Paragraph, para2: Paragraph, para3: Paragraph) = {
     val glyph = para3.appendPicture(imageStream);
     if (currentPoemTitle == "") {
-      para1.appendText(currentPoemCode);
+      para1.appendText("");
     } else {
       para1.appendText(currentPoemTitle);
     }
@@ -59,10 +66,12 @@ class ExportController {
     para1.getFormat().setHorizontalAlignment(HorizontalAlignment.Center);
     para1.getFormat().setBeforeSpacing(20f)
     para1.getFormat().setAfterSpacing(15f);
-    para2.getFormat().setHorizontalAlignment(HorizontalAlignment.Center);
-    para2.getFormat().setLineSpacing(20f)
+    para2.getFormat().setLineSpacing(10f)
     para2.getFormat().setAfterAutoSpacing(false)
     para2.getFormat().setAfterSpacing(10f);
+    para2.getFormat().setHorizontalAlignment(HorizontalAlignment.Left)
+    para3.getFormat().setBeforeSpacing(20f)
+    para3.getFormat().setAfterSpacing(15f);
     para3.getFormat().setHorizontalAlignment(HorizontalAlignment.Center);
 
     para1.applyStyle("titleStyle");
