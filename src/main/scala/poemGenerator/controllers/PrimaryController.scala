@@ -19,5 +19,4 @@ class PrimaryController {
     val docByteArray: ByteString = exportController.exportToWord(outputPoemList)
     docByteArray
   }
-
 }

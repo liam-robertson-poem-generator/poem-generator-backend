@@ -35,6 +35,7 @@ dependencies {
 	implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
 	implementation "com.typesafe.akka:akka-http-spray-json_${scalaVersion}:10.0.7"
 	implementation "com.lightbend.akka:akka-stream-alpakka-json-streaming_${scalaVersion}:3.0.4"
+	implementation 'org.apache.commons:commons-lang3:3.8.1'
 }
 mainClassName = "PoemGeneratorMain"
 

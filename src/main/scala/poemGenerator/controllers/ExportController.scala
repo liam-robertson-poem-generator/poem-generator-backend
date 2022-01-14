@@ -3,21 +3,23 @@ package poemGenerator.controllers
 import akka.util.ByteString
 import com.spire.doc.documents.{HorizontalAlignment, Paragraph, ParagraphStyle}
 import com.spire.doc.{Document, FileFormat}
+import org.w3c.dom
 
-import java.io.{ByteArrayOutputStream, InputStream}
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, InputStream}
 import javax.xml.XMLConstants
-import javax.xml.parsers.DocumentBuilderFactory
-import scala.util.{Failure, Success, Try}
+import javax.xml.parsers.{DocumentBuilder, DocumentBuilderFactory}
+import scala.collection.mutable.ListBuffer
 
 class ExportController {
 
   val inputController = new InputController();
 
   def exportToWord(poemList: Array[Array[Int]]) = {
+    val failureList: ListBuffer[String] = new ListBuffer[String]()
     val document = new Document();
     this.settingDocStyles(document);
 
-    poemList.map(poem => {
+    poemList.foreach(poem => {
       val currentPoemCode = poem.mkString("-")
       val imageStream: InputStream =  getClass().getResourceAsStream("/glyphs/" + currentPoemCode + ".jpg")
       val section = document.addSection();
@@ -25,27 +27,36 @@ class ExportController {
       val para2 = section.addParagraph();
       val para3 = section.addParagraph();
 
-      val (currentPoemTitle, currentPoemText) = this.parsingXml(currentPoemCode);
+      val (currentPoemTitle, currentPoemText) = this.parsingXml(currentPoemCode, failureList);
       this.creatingDocContent(currentPoemCode, currentPoemTitle, imageStream, currentPoemText, document, para1, para2, para3)
     })
+    if (failureList.nonEmpty) throw new Exception(s"Error - The following poems contained special characters that could not be parsed: ${failureList.mkString(", ")}")
     val docByteOut = new ByteArrayOutputStream()
     document.saveToStream(docByteOut, FileFormat.Docx);
     val docByteArray = ByteString(docByteOut.toByteArray)
     docByteArray
   }
 
-  def parsingXml(currentPoemCode: String): (String, String)  = {
+  def parseXml(poemStream: InputStream, db: DocumentBuilder): Option[dom.Document] = try {
+    Some(db.parse(poemStream))
+  } catch {
+    case e: Exception => None
+  }
+
+  def parsingXml(currentPoemCode: String, failureList: ListBuffer[String]): (String, String)  = {
     val poemStream: InputStream =  getClass().getResourceAsStream("/poems/" + currentPoemCode + ".xml")
     val dbf = DocumentBuilderFactory.newInstance
     dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-    val db = dbf.newDocumentBuilder();
+    val db: DocumentBuilder = dbf.newDocumentBuilder();
 
-    val doc = Try(db.parse(poemStream)) match {
-      case Success(value) => value
-      case Failure(exception) =>
-        println(s"\nFailed to parse xml for poem code ${currentPoemCode}\n")
-        throw exception
+    val doc: dom.Document = parseXml(poemStream, db) match {
+      case Some(value) => value
+      case None => {
+        failureList += currentPoemCode
+        db.parse(new ByteArrayInputStream("<poem><title></title><author></author><text></text></poem>".getBytes()))
+      }
     }
+
     doc.getDocumentElement().normalize();
     val currentPoemText: String = doc.getElementsByTagName("text").item(0).getTextContent
     val currentPoemTitle: String = doc.getElementsByTagName("title").item(0).getTextContent
