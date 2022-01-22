@@ -33,6 +33,11 @@ class GeneratorService extends SprayJsonSupport with DefaultJsonProtocol with  C
               path("listAllPoems") {
                 complete(inputController.getSorted2dArray())
               } ~
+              path("getIteratedList") {
+                parameters("numOfPoems".as[Int], "startingPoem".as[Array[Int]], "poemOrder") { (numOfPoems: Int, startingPoem: Array[Int], poemOrder: String) =>
+                  complete(inputController.iterateSorted2dArray(numOfPoems, startingPoem, poemOrder))
+                }
+              } ~
               path("createDocument") {
                 parameters("numOfPoems".as[Int], "startingPoem".as[Array[Int]], "poemOrder") { (numOfPoems: Int, startingPoem: Array[Int], poemOrder: String) =>
                   val docByteArray: ByteString = primaryController.primaryExecutor(numOfPoems, startingPoem, poemOrder)

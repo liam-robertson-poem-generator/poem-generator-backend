@@ -8,23 +8,24 @@ import scala.io.Source
 class InputController {
 
   def iterateSorted2dArray(numOfPoems: Int, startingPoem: Array[Int], poemDirection: String) = {
-    var coordList: Array[Int] = Array(1, 2, 0)
-    var currentPoem: Array[Int] = startingPoem
+    var coordList: Array[Int] = Array(2, 0, 1)
+    var poem2dArray: Array[Array[Int]] = this.getSorted2dArray()
     var nextPoem: Array[Int] = startingPoem
 
-    currentPoem = nextPoem
+    var currentPoem: Array[Int] = nextPoem
     var final2dArray: Array[Array[Int]] = Array() :+ currentPoem
-    coordList = coordList.slice(1,3) ++ coordList.slice(0,1)
-    var poem2dArray: Array[Array[Int]] = this.getSorted2dArray().sortBy(poemMatrix => (poemMatrix(coordList(0)), poemMatrix(coordList(1)), poemMatrix(coordList(2))))
+    poem2dArray = poem2dArray.sortBy(poemMatrix => (poemMatrix(coordList(0)), poemMatrix(coordList(1)), poemMatrix(coordList(2))))
+    coordList = coordList.tail :+ coordList.head
     nextPoem = poem2dArray(poem2dArray.map(poemName => poemName.mkString(",")).indexOf(currentPoem.mkString(",")) + 1)
+    poem2dArray = poem2dArray.filter(poemName => !(poemName sameElements currentPoem))
 
     while (final2dArray.length < numOfPoems) {
       currentPoem = nextPoem
       final2dArray = final2dArray :+ currentPoem
-      poem2dArray = poem2dArray.filter(poemName => poemName != currentPoem)
-      coordList = coordList.slice(1,3) ++ coordList.slice(0,1)
       poem2dArray = poem2dArray.sortBy(poemMatrix => (poemMatrix(coordList(0)), poemMatrix(coordList(1)), poemMatrix(coordList(2))))
+      coordList = coordList.tail :+ coordList.head
       nextPoem = poem2dArray(poem2dArray.map(poemName => poemName.mkString(",")).indexOf(currentPoem.mkString(",")) + 1)
+      poem2dArray = poem2dArray.filter(poemName => !(poemName sameElements currentPoem))
     }
     if (poemDirection == "end") {
       final2dArray = final2dArray.reverse
