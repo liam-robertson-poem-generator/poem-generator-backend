@@ -9,7 +9,7 @@ object PoemGeneratorMain {
     implicit val system = ActorSystem()
     implicit val executionContext = system.dispatcher
 
-    val generatorService = new GeneratorService();
+    val generatorService = new GeneratorService;
 
     val route: Route =
       pathPrefix("poem-generator") {

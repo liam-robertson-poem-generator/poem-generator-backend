@@ -36,6 +36,12 @@ dependencies {
 	implementation "com.typesafe.akka:akka-http-spray-json_${scalaVersion}:10.0.7"
 	implementation "com.lightbend.akka:akka-stream-alpakka-json-streaming_${scalaVersion}:3.0.4"
 	implementation 'org.apache.commons:commons-lang3:3.8.1'
+//	testImplementation 'org.scalatest:scalatest_3:3.2.11'
+//	testImplementation 'junit:junit:4.13.1'
+//	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+	testImplementation 'com.novocode:junit-interface:0.10'
+//	testImplementation 'org.scalatest:scalatest_2.13:3.2.10'
+
 }
 mainClassName = "PoemGeneratorMain"
 
@@ -45,7 +51,7 @@ jar {
 	}
 }
 
-test {
-	useJUnitPlatform()
-}
-
+//test {
+//	useJUnitPlatform()
+//}
+//

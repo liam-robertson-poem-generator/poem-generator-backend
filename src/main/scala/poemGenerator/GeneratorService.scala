@@ -22,7 +22,7 @@ class GeneratorService extends SprayJsonSupport with DefaultJsonProtocol with  C
         )
     }
 
-        val routes: Route =
+      val routes: Route =
       concat(
         corsHandler(
           handleExceptions(myExceptionHandler) {
@@ -31,7 +31,7 @@ class GeneratorService extends SprayJsonSupport with DefaultJsonProtocol with  C
                 complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, inputController.serverStatusMessage))
               }
               path("listAllPoems") {
-                complete(inputController.getSorted2dArray())
+                complete(inputController.getSorted2dArray)
               } ~
               path("getIteratedList") {
                 parameters("numOfPoems".as[Int], "startingPoem".as[Array[Int]], "poemOrder") { (numOfPoems: Int, startingPoem: Array[Int], poemOrder: String) =>

@@ -15,7 +15,7 @@ class PrimaryController {
    * The word document is served to the client
    */
   def primaryExecutor(numOfPoems: Int, startingPoem: Array[Int], poemOrder: String) = {
-    val outputPoemList = inputController.iterateSorted2dArray(numOfPoems, startingPoem, poemOrder)
+    val outputPoemList: Array[Array[Int]] = inputController.iterateSorted2dArray(numOfPoems, startingPoem, poemOrder)
     val docByteArray: ByteString = exportController.exportToWord(outputPoemList)
     docByteArray
   }
